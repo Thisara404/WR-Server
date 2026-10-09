@@ -9,10 +9,10 @@ import type { INestApplication } from "@nestjs/common";
 import request from "supertest";
 import express from "express";
 import { AppModule } from "../src/app.module";
-import { DatabaseService } from "../src/database.service";
+import { DatabaseService } from "../src/services";
 import { createModels, type Models } from "../src/models";
-import { HttpErrorFilter } from "../src/http-error.filter";
-import { hashPassword } from "../src/password";
+import { HttpErrorFilter } from "../src/common";
+import { hashPassword } from "../src/security/password";
 import { signSession, cookieName } from "../src/security";
 
 // Uses its own randomly named database. Only that test database is dropped.

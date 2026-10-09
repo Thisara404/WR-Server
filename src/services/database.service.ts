@@ -8,11 +8,13 @@ import {
   type Connection,
   type ClientSession,
 } from "mongoose";
-import { createModels, type Models } from "./models";
+import { createModels, type Models } from "../models/models";
+
 @Injectable()
 export class DatabaseService implements OnModuleInit, OnModuleDestroy {
   connection!: Connection;
   models!: Models;
+
   async onModuleInit() {
     const uri = process.env.MONGODB_URI;
     if (!uri || uri.includes("YOUR_"))
@@ -27,6 +29,7 @@ export class DatabaseService implements OnModuleInit, OnModuleDestroy {
     }).asPromise();
     this.models = createModels(this.connection);
   }
+
   async transaction<T>(
     work: (session: ClientSession) => Promise<T>,
   ): Promise<T> {
@@ -40,6 +43,7 @@ export class DatabaseService implements OnModuleInit, OnModuleDestroy {
       await session.endSession();
     }
   }
+
   async onModuleDestroy() {
     await this.connection?.close();
   }

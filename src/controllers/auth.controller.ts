@@ -13,19 +13,21 @@ import {
 } from "@nestjs/common";
 import { createHash } from "node:crypto";
 import type { Response } from "express";
-import { DatabaseService } from "./database.service";
+import { DatabaseService } from "../services/database.service";
 import {
   Public,
   cookieName,
   cookieOptions,
   signSession,
   type AuthRequest,
-} from "./security";
-import { loginSchema } from "./validation";
-import { verifyPassword } from "./password";
+} from "../security/security";
+import { loginSchema } from "../common/validation";
+import { verifyPassword } from "../security/password";
+
 @Controller("auth")
 export class AuthController {
   constructor(@Inject(DatabaseService) private readonly db: DatabaseService) {}
+
   @Public()
   @Post("login")
   @HttpCode(200)
@@ -64,9 +66,11 @@ export class AuthController {
       },
     };
   }
+
   @Get("me") me(@Req() request: AuthRequest) {
     return { user: request.user };
   }
+
   @Public()
   @Post("logout")
   @HttpCode(200)

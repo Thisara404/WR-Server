@@ -3,6 +3,7 @@ import {
   scrypt as scryptCallback,
   timingSafeEqual,
 } from "node:crypto";
+
 const scrypt = (password: string, salt: string) =>
   new Promise<Buffer>((resolve, reject) =>
     scryptCallback(
@@ -13,11 +14,13 @@ const scrypt = (password: string, salt: string) =>
       (error, key) => (error ? reject(error) : resolve(key)),
     ),
   );
+
 export async function hashPassword(password: string) {
   const salt = randomBytes(16).toString("hex");
   const hash = await scrypt(password, salt);
   return `scrypt:${salt}:${hash.toString("hex")}`;
 }
+
 export async function verifyPassword(password: string, stored: string) {
   const [format, salt, hex] = stored.split(":");
   if (format !== "scrypt" || !salt || !hex) return false;

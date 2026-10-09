@@ -3,8 +3,9 @@ import "dotenv/config";
 import { NestFactory } from "@nestjs/core";
 import express from "express";
 import { AppModule } from "./app.module";
-import { HttpErrorFilter } from "./http-error.filter";
+import { HttpErrorFilter } from "./common";
 import { getSecret } from "./security";
+
 export async function createApplication() {
   getSecret();
   const app = await NestFactory.create(AppModule, { bodyParser: false });

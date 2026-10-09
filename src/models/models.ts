@@ -1,4 +1,5 @@
 import { Schema, type Connection } from "mongoose";
+
 const userSchema = new Schema(
   {
     name: { type: String, required: true },
@@ -10,6 +11,7 @@ const userSchema = new Schema(
   { timestamps: true },
 );
 userSchema.index({ email: 1 }, { unique: true });
+
 const workshopSchema = new Schema(
   {
     code: { type: String, required: true },
@@ -32,6 +34,7 @@ const workshopSchema = new Schema(
 );
 workshopSchema.index({ code: 1 }, { unique: true });
 workshopSchema.index({ startsAt: 1, status: 1 });
+
 const registrationSchema = new Schema(
   {
     workshopId: {
@@ -62,6 +65,7 @@ registrationSchema.index(
   { unique: true, partialFilterExpression: { status: "ACTIVE" } },
 );
 registrationSchema.index({ workshopId: 1, registeredAt: -1 });
+
 const eventSchema = new Schema(
   {
     registrationId: {
@@ -82,6 +86,7 @@ const eventSchema = new Schema(
   { versionKey: false },
 );
 eventSchema.index({ workshopId: 1, occurredAt: -1 });
+
 const auditSchema = new Schema(
   {
     actorId: { type: Schema.Types.ObjectId, ref: "User", required: true },
@@ -94,6 +99,7 @@ const auditSchema = new Schema(
   { versionKey: false },
 );
 auditSchema.index({ entityType: 1, entityId: 1, occurredAt: -1 });
+
 const loginLimitSchema = new Schema(
   {
     _id: String,
@@ -103,6 +109,7 @@ const loginLimitSchema = new Schema(
   { versionKey: false },
 );
 loginLimitSchema.index({ windowStart: 1 }, { expireAfterSeconds: 900 });
+
 export function createModels(connection: Connection) {
   return {
     User: connection.models.User ?? connection.model("User", userSchema),
@@ -119,4 +126,5 @@ export function createModels(connection: Connection) {
       connection.model("LoginLimit", loginLimitSchema),
   };
 }
+
 export type Models = ReturnType<typeof createModels>;

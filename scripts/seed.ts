@@ -1,7 +1,7 @@
 import "dotenv/config";
 import { createConnection } from "mongoose";
 import { createModels } from "../src/models";
-import { hashPassword } from "../src/password";
+import { hashPassword } from "../src/security/password";
 async function main() {
   const uri = process.env.MONGODB_URI;
   if (!uri || uri.includes("YOUR_"))

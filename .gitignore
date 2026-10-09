@@ -2,8 +2,8 @@
 node_modules/
 .pnp
 .pnp.js
-.env
 # Environment variables and sensitive credentials (DO NOT COMMIT)
+.env
 .env.*
 *.env
 *.env.*

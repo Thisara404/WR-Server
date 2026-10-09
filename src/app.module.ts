@@ -1,17 +1,19 @@
 import { Module, Controller, Get, Inject } from "@nestjs/common";
 import { APP_GUARD } from "@nestjs/core";
-import { DatabaseService } from "./database.service";
-import { AuthController } from "./auth.controller";
-import { UsersController } from "./users.controller";
+import { DatabaseService, WorkshopsService } from "./services";
 import {
+  AuthController,
+  UsersController,
   WorkshopsController,
   RegistrationsController,
-} from "./workshops.controller";
-import { WorkshopsService } from "./workshops.service";
+} from "./controllers";
 import { Public, AuthGuard, RolesGuard, WriteGuard } from "./security";
+
 @Controller()
 class RootController {
-  @Public() @Get() root() {
+  @Public()
+  @Get()
+  root() {
     return {
       status: "ok",
       service: "Workshop Registration Service API",
@@ -19,14 +21,19 @@ class RootController {
     };
   }
 }
+
 @Controller("health")
 class HealthController {
   constructor(@Inject(DatabaseService) private readonly db: DatabaseService) {}
-  @Public() @Get() async health() {
+
+  @Public()
+  @Get()
+  async health() {
     await this.db.connection.db!.command({ ping: 1 });
     return { status: "ok" };
   }
 }
+
 @Module({
   controllers: [
     RootController,

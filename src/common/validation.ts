@@ -1,11 +1,16 @@
 import { z } from "zod";
+
 export const roles = ["ADMIN", "MANAGER", "STAFF"] as const;
 export type Role = (typeof roles)[number];
+
 export const statuses = ["SCHEDULED", "COMPLETED", "CANCELLED"] as const;
+
 const email = z.string().trim().toLowerCase().pipe(z.email().max(200));
+
 export const loginSchema = z
   .object({ email, password: z.string().min(1).max(200) })
   .strict();
+
 export const userSchema = z
   .object({
     name: z.string().trim().min(2).max(100),
@@ -14,6 +19,7 @@ export const userSchema = z
     role: z.enum(roles),
   })
   .strict();
+
 export const workshopSchema = z
   .object({
     code: z
@@ -31,9 +37,11 @@ export const workshopSchema = z
     status: z.enum(statuses).default("SCHEDULED"),
   })
   .strict();
+
 export const updateWorkshopSchema = workshopSchema.extend({
   expectedVersion: z.number().int().positive(),
 });
+
 export const registrationSchema = z
   .object({
     attendeeName: z.string().trim().min(2).max(100),
@@ -41,12 +49,15 @@ export const registrationSchema = z
     requestId: z.uuid(),
   })
   .strict();
+
 export const cancellationSchema = z
   .object({ reason: z.string().trim().max(300).default("") })
   .strict();
+
 export const idSchema = z
   .string()
   .regex(/^[0-9a-fA-F]{24}$/, "Invalid record ID");
+
 const date = z
   .string()
   .regex(/^\d{4}-\d{2}-\d{2}$/)
@@ -56,6 +67,7 @@ const date = z
       new Date(value).toISOString().slice(0, 10) === value,
     "Invalid date",
   );
+
 export const filterSchema = z
   .object({
     from: date.optional(),

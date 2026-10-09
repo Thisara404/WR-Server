@@ -12,8 +12,8 @@ import {
   HttpCode,
 } from "@nestjs/common";
 import type { Response } from "express";
-import { Roles, type AuthRequest } from "./security";
-import { WorkshopsService } from "./workshops.service";
+import { Roles, type AuthRequest } from "../security/security";
+import { WorkshopsService } from "../services/workshops.service";
 import {
   filterSchema,
   idSchema,
@@ -21,26 +21,37 @@ import {
   updateWorkshopSchema,
   registrationSchema,
   cancellationSchema,
-} from "./validation";
+} from "../common/validation";
+
 @Controller("workshops")
 @Roles("MANAGER", "STAFF")
 export class WorkshopsController {
   constructor(
     @Inject(WorkshopsService) private readonly service: WorkshopsService,
   ) {}
-  @Get() list(@Query() query: unknown) {
+
+  @Get()
+  list(@Query() query: unknown) {
     return this.service.list(filterSchema.parse(query));
   }
-  @Get(":id") detail(@Param("id") id: string) {
+
+  @Get(":id")
+  detail(@Param("id") id: string) {
     return this.service.detail(idSchema.parse(id));
   }
-  @Roles("MANAGER") @Post() create(
+
+  @Roles("MANAGER")
+  @Post()
+  create(
     @Body() body: unknown,
     @Req() request: AuthRequest,
   ) {
     return this.service.create(workshopSchema.parse(body), request.user);
   }
-  @Roles("MANAGER") @Patch(":id") update(
+
+  @Roles("MANAGER")
+  @Patch(":id")
+  update(
     @Param("id") id: string,
     @Body() body: unknown,
     @Req() request: AuthRequest,
@@ -51,7 +62,9 @@ export class WorkshopsController {
       request.user,
     );
   }
-  @Post(":id/registrations") async register(
+
+  @Post(":id/registrations")
+  async register(
     @Param("id") id: string,
     @Body() body: unknown,
     @Req() request: AuthRequest,
@@ -66,13 +79,17 @@ export class WorkshopsController {
     return result;
   }
 }
+
 @Controller("registrations")
 @Roles("MANAGER", "STAFF")
 export class RegistrationsController {
   constructor(
     @Inject(WorkshopsService) private readonly service: WorkshopsService,
   ) {}
-  @Post(":id/cancel") @HttpCode(200) cancel(
+
+  @Post(":id/cancel")
+  @HttpCode(200)
+  cancel(
     @Param("id") id: string,
     @Body() body: unknown,
     @Req() request: AuthRequest,

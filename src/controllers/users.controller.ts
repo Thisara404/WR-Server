@@ -1,13 +1,16 @@
 import { Controller, Get, Post, Body, Req, Inject } from "@nestjs/common";
-import { DatabaseService } from "./database.service";
-import { Roles, type AuthRequest } from "./security";
-import { userSchema } from "./validation";
-import { hashPassword } from "./password";
+import { DatabaseService } from "../services/database.service";
+import { Roles, type AuthRequest } from "../security/security";
+import { userSchema } from "../common/validation";
+import { hashPassword } from "../security/password";
+
 @Controller("users")
 @Roles("ADMIN")
 export class UsersController {
   constructor(@Inject(DatabaseService) private readonly db: DatabaseService) {}
-  @Get() async list() {
+
+  @Get()
+  async list() {
     return {
       data: await this.db.models.User.find()
         .select("_id name email role createdAt")
@@ -15,7 +18,9 @@ export class UsersController {
         .lean(),
     };
   }
-  @Get("history") async history() {
+
+  @Get("history")
+  async history() {
     return {
       data: await this.db.models.Audit.find({ entityType: "USER" })
         .populate("actorId", "name")
@@ -24,7 +29,9 @@ export class UsersController {
         .lean(),
     };
   }
-  @Post() async create(@Body() body: unknown, @Req() request: AuthRequest) {
+
+  @Post()
+  async create(@Body() body: unknown, @Req() request: AuthRequest) {
     const input = userSchema.parse(body);
     const passwordHash = await hashPassword(input.password);
     return this.db.transaction(async (session) => {

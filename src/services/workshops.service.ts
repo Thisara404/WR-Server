@@ -7,18 +7,21 @@ import {
 } from "@nestjs/common";
 import type { z } from "zod";
 import { DatabaseService } from "./database.service";
-import type { User } from "./security";
+import type { User } from "../security/security";
 import {
   filterSchema,
   workshopSchema,
   updateWorkshopSchema,
   registrationSchema,
-} from "./validation";
+} from "../common/validation";
+
 const escapeRegex = (value: string) =>
   value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
 @Injectable()
 export class WorkshopsService {
   constructor(@Inject(DatabaseService) private readonly db: DatabaseService) {}
+
   async list(input: z.infer<typeof filterSchema>) {
     const filter: Record<string, any> = {};
     if (input.search) {
@@ -65,6 +68,7 @@ export class WorkshopsService {
       limit: input.limit,
     };
   }
+
   async detail(id: string) {
     const workshop = await this.db.models.Workshop.findById(id).lean();
     if (!workshop) throw new NotFoundException("Workshop not found.");
@@ -94,6 +98,7 @@ export class WorkshopsService {
       audit,
     };
   }
+
   async create(input: z.infer<typeof workshopSchema>, user: User) {
     if (
       input.status === "SCHEDULED" &&
@@ -129,6 +134,7 @@ export class WorkshopsService {
       return workshop;
     });
   }
+
   async update(
     id: string,
     input: z.infer<typeof updateWorkshopSchema>,
@@ -186,6 +192,7 @@ export class WorkshopsService {
       return updated;
     });
   }
+
   async register(
     id: string,
     input: z.infer<typeof registrationSchema>,
@@ -247,6 +254,7 @@ export class WorkshopsService {
       return { registration, replayed: false };
     });
   }
+
   async cancel(id: string, reason: string, user: User) {
     return this.db.transaction(async (session) => {
       const existing = await this.db.models.Registration.findById(id)

@@ -6,16 +6,16 @@ import { RolesGuard, WriteGuard, type User } from "../src/security";
 import {
   WorkshopsController,
   RegistrationsController,
-} from "../src/workshops.controller";
-import { UsersController } from "../src/users.controller";
+  UsersController,
+} from "../src/controllers";
 import {
   registrationSchema,
   workshopSchema,
   updateWorkshopSchema,
   filterSchema,
   idSchema,
-} from "../src/validation";
-import { hashPassword, verifyPassword } from "../src/password";
+} from "../src/common";
+import { hashPassword, verifyPassword } from "../src/security/password";
 const context = (controller: any, method: string, role: string) =>
   ({
     getHandler: () => controller.prototype[method],
