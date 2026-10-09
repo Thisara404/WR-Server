@@ -1,0 +1,36 @@
+import { Module, Controller, Get, Inject } from "@nestjs/common";
+import { APP_GUARD } from "@nestjs/core";
+import { DatabaseService } from "./database.service";
+import { AuthController } from "./auth.controller";
+import { UsersController } from "./users.controller";
+import {
+  WorkshopsController,
+  RegistrationsController,
+} from "./workshops.controller";
+import { WorkshopsService } from "./workshops.service";
+import { Public, AuthGuard, RolesGuard, WriteGuard } from "./security";
+@Controller("health")
+class HealthController {
+  constructor(@Inject(DatabaseService) private readonly db: DatabaseService) {}
+  @Public() @Get() async health() {
+    await this.db.connection.db!.command({ ping: 1 });
+    return { status: "ok" };
+  }
+}
+@Module({
+  controllers: [
+    AuthController,
+    UsersController,
+    WorkshopsController,
+    RegistrationsController,
+    HealthController,
+  ],
+  providers: [
+    DatabaseService,
+    WorkshopsService,
+    { provide: APP_GUARD, useClass: WriteGuard },
+    { provide: APP_GUARD, useClass: AuthGuard },
+    { provide: APP_GUARD, useClass: RolesGuard },
+  ],
+})
+export class AppModule {}
