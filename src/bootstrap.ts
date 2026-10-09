@@ -31,7 +31,7 @@ export async function createApplication() {
     if (url.includes("127.0.0.1:5173")) allowedOrigins.add("http://localhost:5173");
   }
   app.enableCors({
-    origin: Array.from(allowedOrigins),
+    origin: [...Array.from(allowedOrigins), /\.vercel\.app$/],
     credentials: true,
   });
   app.useGlobalFilters(new HttpErrorFilter());

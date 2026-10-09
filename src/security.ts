@@ -122,7 +122,7 @@ export class WriteGuard implements CanActivate {
       if (url.includes("127.0.0.1:5173")) allowed.add("http://localhost:5173");
     }
     const origin = request.headers.origin?.replace(/\/$/, "");
-    if (origin && !allowed.has(origin))
+    if (origin && !allowed.has(origin) && !origin.endsWith(".vercel.app"))
       throw new ForbiddenException("Cross-origin requests are not allowed.");
     if (!request.is("application/json"))
       throw new UnsupportedMediaTypeException("Use application/json.");
