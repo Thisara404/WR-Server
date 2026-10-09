@@ -9,6 +9,16 @@ import {
 } from "./workshops.controller";
 import { WorkshopsService } from "./workshops.service";
 import { Public, AuthGuard, RolesGuard, WriteGuard } from "./security";
+@Controller()
+class RootController {
+  @Public() @Get() root() {
+    return {
+      status: "ok",
+      service: "Workshop Registration Service API",
+      health: "/api/health",
+    };
+  }
+}
 @Controller("health")
 class HealthController {
   constructor(@Inject(DatabaseService) private readonly db: DatabaseService) {}
@@ -19,6 +29,7 @@ class HealthController {
 }
 @Module({
   controllers: [
+    RootController,
     AuthController,
     UsersController,
     WorkshopsController,

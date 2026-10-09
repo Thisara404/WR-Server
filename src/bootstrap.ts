@@ -8,7 +8,7 @@ import { getSecret } from "./security";
 export async function createApplication() {
   getSecret();
   const app = await NestFactory.create(AppModule, { bodyParser: false });
-  app.setGlobalPrefix("api");
+  app.setGlobalPrefix("api", { exclude: ["/"] });
   app.use(express.json({ limit: "32kb" }));
   app.use(
     (
